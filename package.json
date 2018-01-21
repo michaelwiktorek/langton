@@ -1,0 +1,12 @@
+{
+  "name": "Langton",
+  "version": "1.0.0",
+  "description": "Langton's Ant Implementation",
+  "main": "index.js",
+  "author": "Michael Wiktorek",
+  "license": "MIT",
+  "dependencies": {
+    "@types/react": "^16.0.34",
+    "react": "^16.2.0"
+  }
+}
