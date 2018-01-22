@@ -24,7 +24,7 @@ export class Grid {
 
     public getSquare = (coord: Coordinate) => {
         if (!this.isValidAccess(coord)) {
-            throw new Error("invalid index");
+            throw new Error(`Invalid coordinate: x: ${coord.x}, y: ${coord.y}`);
         }
         const index = this.coordinateToIndex(coord);
         return this.gridList[index];
@@ -32,7 +32,7 @@ export class Grid {
 
     public isValidAccess = (coord: Coordinate) => {
         const { x, y } = coord;
-        return x >= this.size || y >= this.size;
+        return x < this.size && y < this.size;
     };
 
     private coordinateToIndex = (coord: Coordinate) => {

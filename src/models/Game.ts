@@ -1,39 +1,14 @@
 import { Bug } from "./Bug";
-import { Coordinate } from "./Coordinate";
-import { Direction, translate, rotate } from "./Direction";
+import { translate, rotate } from "./Direction";
 import { Grid } from "./Grid";
 import { RuleSet } from "./RuleSet";
-import { GridSquareColor } from "./GridSquareColor";
-
-export interface GameState {
-    grid: Grid;
-    bug: Bug;
-}
+import { GameState } from "./GameState";
 
 export class Game {
-    private stateList: GameState[];
+    constructor(private rules: RuleSet) {}
 
-    constructor(
-        private readonly size: number,
-        startingPosition: Coordinate,
-        startingDirection: Direction,
-        private rules: RuleSet
-    ) {
-        const startingGrid = new Grid(size);
-        const startingBug: Bug = {
-            direction: startingDirection,
-            position: startingPosition
-        };
-        this.stateList = [
-            {
-                grid: startingGrid,
-                bug: startingBug
-            }
-        ];
-    }
-
-    public tick = () => {
-        const { grid, bug } = this.getLatestState();
+    public tick = (state: GameState) => {
+        const { grid, bug } = state;
         const gridSquare = grid.getSquare(bug.position);
         const rule = this.rules[gridSquare.getColor];
         const newDirection = rotate(bug.direction, rule.rotation);
@@ -43,11 +18,7 @@ export class Game {
             bug: { direction: newDirection, position: newPosition },
             grid: grid.updateGrid(bug.position, newColor)
         };
-        this.stateList.push(newState);
-    };
-
-    public getLatestState = () => {
-        return this.stateList[this.stateList.length - 1];
+        return newState;
     };
 
     private moveBug = (bug: Bug, grid: Grid) => {
