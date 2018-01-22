@@ -6,8 +6,11 @@
     "author": "Michael Wiktorek",
     "license": "MIT",
     "dependencies": {
+        "@types/lodash": "^4.14.93",
         "@types/react": "^16.0.34",
         "@types/react-dom": "^16.0.3",
+        "lodash": "^4.17.4",
+        "path": "^0.12.7",
         "react": "^16.2.0",
         "react-dom": "^16.2.0",
         "source-map-loader": "^0.2.3",

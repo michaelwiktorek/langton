@@ -1,10 +1,13 @@
+var path = require("path");
+
 module.exports = {
     entry: "./src/index.tsx",
     output: {
         filename: "bundle.js",
-        path: __dirname + "/dist"
+        path: path.resolve(__dirname, "dist"),
+        publicPath: "/dist/"
     },
-    devtool: "source-map",
+    devtool: "inline-source-map",
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"]
     },
