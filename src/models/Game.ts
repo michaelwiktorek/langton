@@ -29,4 +29,19 @@ export class Game {
             throw new Error("Bug will leave map");
         }
     };
+
+    // TODO improve this crap
+    public renderGameState = (state: GameState) => {
+        const size = state.grid.getSize;
+        const output: string[] = [];
+        for (let i = 0; i < size; i++) {
+            let line = "";
+            for (let j = 0; j < size; j++) {
+                const color = state.grid.getSquare({ x: i, y: j }).getColor;
+                line = line + (color === 0 ? "." : ",");
+            }
+            output.push(line);
+        }
+        return output;
+    };
 }

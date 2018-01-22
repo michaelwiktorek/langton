@@ -30,6 +30,10 @@ export class Grid {
         return this.gridList[index];
     };
 
+    get getSize() {
+        return this.size;
+    }
+
     public isValidAccess = (coord: Coordinate) => {
         const { x, y } = coord;
         return x < this.size && y < this.size;

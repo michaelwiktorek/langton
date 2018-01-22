@@ -4,6 +4,7 @@ import { Game } from "../models/Game";
 import { RuleSet } from "../models/RuleSet";
 import { GameState } from "../models/GameState";
 import { Grid } from "../models/Grid";
+import "./App.scss";
 
 export interface AppState {
     game: Game;
@@ -21,9 +22,9 @@ export class App extends React.Component<{}, AppState> {
             game: new Game(rules),
             history: [
                 {
-                    grid: new Grid(100),
+                    grid: new Grid(50),
                     bug: {
-                        position: { x: 50, y: 50 },
+                        position: { x: 25, y: 25 },
                         direction: Direction.NORTH
                     }
                 }
@@ -44,13 +45,26 @@ export class App extends React.Component<{}, AppState> {
     };
 
     render() {
-        const position = this.getLatestState().bug.position;
+        const currentState = this.getLatestState();
+        const position = currentState.bug.position;
+        const map = this.state.game.renderGameState(currentState);
         return (
-            <div>
+            <div className="app-container">
                 <div>
                     x: {position.x}, y: {position.y}
                 </div>
-                <div onClick={this.handleUpdate}>click me to update</div>
+                <div>
+                    {map.map((line, index) => {
+                        return (
+                            <span className="line-span" key={index}>
+                                {line}
+                            </span>
+                        );
+                    })}
+                </div>
+                <div className="tick-button" onClick={this.handleUpdate}>
+                    click me to update
+                </div>
             </div>
         );
     }
