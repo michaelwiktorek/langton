@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "strictNullChecks": true,
+        "noUnusedLocals": true,
+        "experimentalDecorators": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "target": "es5",
+        "jsx": "react",
+        "lib": ["dom", "es6"]
+    },
+    "include": ["./src/*/*"]
+}
