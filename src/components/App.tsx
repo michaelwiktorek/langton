@@ -3,7 +3,7 @@ import { Rotation, Direction } from "../models/Direction";
 import { Game } from "../models/Game";
 import { RuleSet } from "../models/RuleSet";
 import { GameState } from "../models/GameState";
-import { Grid } from "../models/Grid";
+import { newGrid, getSquare } from "../models/Grid";
 import * as classnames from "classnames";
 import "./App.scss";
 import { Bug } from "../models/Bug";
@@ -26,7 +26,7 @@ export class App extends React.Component<{}, AppState> {
             game: new Game(rules),
             history: [
                 {
-                    grid: new Grid(50),
+                    grid: newGrid(50),
                     bug: {
                         position: { x: 25, y: 25 },
                         direction: Direction.NORTH
@@ -59,7 +59,7 @@ export class App extends React.Component<{}, AppState> {
     };
 
     public renderGameState = (state: GameState) => {
-        const size = state.grid.getSize;
+        const size = state.grid.data.length;
         const position = state.bug.position;
         const output: React.ReactNode[][] = [];
         for (let i = size - 1; i >= 0; i--) {
@@ -69,7 +69,7 @@ export class App extends React.Component<{}, AppState> {
                     <div
                         key={`${i}-${j}`}
                         className={classnames(
-                            "color-" + state.grid.getSquare({ x: j, y: i }),
+                            "color-" + getSquare(state.grid, { x: j, y: i }),
                             "grid-cell"
                         )}
                     >
