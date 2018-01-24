@@ -9,7 +9,9 @@ export enum Direction {
 
 export enum Rotation {
     CLOCKWISE = "clockwise",
-    COUNTER_CLOCKWISE = "counter-clockwise"
+    COUNTER_CLOCKWISE = "counter-clockwise",
+    AROUND = "u-turn",
+    NONE = "none"
 }
 
 const directions = [
@@ -24,10 +26,15 @@ export function rotate(
     rotation: Rotation
 ): Direction {
     const currentIndex = directions.indexOf(currentDirection);
-    if (rotation === Rotation.CLOCKWISE) {
-        return directions[(currentIndex + 1) % directions.length];
-    } else {
-        return directions[mod(currentIndex - 1, directions.length)];
+    switch (rotation) {
+        case Rotation.CLOCKWISE:
+            return directions[(currentIndex + 1) % directions.length];
+        case Rotation.COUNTER_CLOCKWISE:
+            return directions[mod(currentIndex - 1, directions.length)];
+        case Rotation.AROUND:
+            return directions[(currentIndex + 2) % directions.length];
+        case Rotation.NONE:
+            return currentDirection;
     }
 }
 
