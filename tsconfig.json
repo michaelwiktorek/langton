@@ -15,5 +15,5 @@
         "jsx": "react",
         "lib": ["dom", "es6"]
     },
-    "include": ["./src/*/*"]
+    "include": ["./src/**/*", "./local_types/*"]
 }
