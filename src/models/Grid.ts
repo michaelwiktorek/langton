@@ -6,6 +6,13 @@ export interface Grid {
 }
 
 export function getSquare(grid: Grid, coord: Coordinate): GridSquareColor {
+    if (
+        coord.x >= grid.data.length ||
+        coord.y >= grid.data.length ||
+        grid.data[coord.x] === undefined
+    ) {
+        throw new Error(`Access outside of grid at ${coord.x}, ${coord.y}`);
+    }
     return grid.data[coord.x][coord.y];
 }
 

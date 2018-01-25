@@ -5,6 +5,7 @@ import { RuleSet } from "./RuleSet";
 import { GameState } from "./GameState";
 import { Coordinate } from "./Coordinate";
 import { GridSquareColor } from "./GridSquareColor";
+import { DrawingDatum } from "./DrawingDatum";
 
 export interface DrawDatum {
     position: Coordinate;
@@ -31,7 +32,7 @@ export class Game {
         return newState;
     };
 
-    public mutableTick = (state: GameState) => {
+    public mutableTick = (state: GameState): DrawingDatum => {
         const { grid, bug } = state;
         const color = getSquare(grid, bug.position);
         const rule = this.rules[color];

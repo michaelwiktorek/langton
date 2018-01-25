@@ -1,3 +1,7 @@
+export function numberToColor(num: number) {
+    return num === 0 ? "black" : CSS_COLOR_NAMES[num + 20];
+}
+
 export const CSS_COLOR_NAMES = [
     "AliceBlue",
     "AntiqueWhite",

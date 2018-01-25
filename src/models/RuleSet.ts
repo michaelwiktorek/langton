@@ -43,6 +43,5 @@ export function turnSequenceToRuleSet(sequence: string): RuleSet {
                 throw new Error("incorrect turn sequence string " + sequence);
         }
     }
-    console.log(rules);
     return rules;
 }
