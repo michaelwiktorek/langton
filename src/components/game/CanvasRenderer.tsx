@@ -11,6 +11,7 @@ export interface CanvasRendererProps {
     gridSize: number;
     rules: string;
     initialBug: Bug;
+    bufferLength: number;
 }
 
 export class CanvasRenderer extends React.Component<CanvasRendererProps> {
@@ -95,7 +96,7 @@ export class CanvasRenderer extends React.Component<CanvasRendererProps> {
         this.timerId = window.setInterval(this.handleTick, 50);
     };
     private handleBuffer = () => {
-        this.bufferCanvasUpdates(1000);
+        this.bufferCanvasUpdates(this.props.bufferLength);
     };
     private handlePlayBuffer = () => {
         this.bufferedTimerId = window.setInterval(this.handleBuffer, 50);

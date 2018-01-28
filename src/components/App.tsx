@@ -9,37 +9,37 @@ export interface AppState {
     gridSize: number;
     rules: string;
     initialBug: Bug;
+    bufferLength: number;
 }
 
 const COOL_RULES: { [index: string]: string } = {
     triangle: "RRLLLRLLLRRR",
-    langton: "RL"
+    langton: "RL",
+    chaos: "RLR",
+    symmetry: "LLRR",
+    square: "LRRRRRLLR",
+    convolutedHighway: "LLRRRLRLRLLR"
 };
 
 export class App extends React.Component<{}, AppState> {
     constructor(props: React.Props<{}>) {
         super(props);
         this.state = {
-            canvasMultiplier: 3,
-            gridSize: 256,
-            rules: COOL_RULES["triangle"],
+            canvasMultiplier: 1,
+            gridSize: 2048,
+            rules: COOL_RULES["square"],
             initialBug: {
-                position: { x: 170, y: 215 },
+                position: { x: 1024, y: 1024 },
                 direction: Direction.NORTH
-            }
+            },
+            bufferLength: 2000000
         };
     }
 
     render() {
-        const { canvasMultiplier, gridSize, rules, initialBug } = this.state;
         return (
             <div className="app-container">
-                <CanvasRenderer
-                    canvasMultiplier={canvasMultiplier}
-                    gridSize={gridSize}
-                    rules={rules}
-                    initialBug={initialBug}
-                />
+                <CanvasRenderer {...this.state} />
             </div>
         );
     }
