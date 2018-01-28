@@ -25,14 +25,14 @@ export class App extends React.Component<{}, AppState> {
     constructor(props: React.Props<{}>) {
         super(props);
         this.state = {
-            canvasMultiplier: 1,
-            gridSize: 2048,
+            canvasMultiplier: 10,
+            gridSize: 128,
             rules: COOL_RULES["square"],
             initialBug: {
-                position: { x: 1024, y: 1024 },
+                position: { x: 64, y: 64 },
                 direction: Direction.NORTH
             },
-            bufferLength: 2000000
+            bufferLength: 100
         };
     }
 

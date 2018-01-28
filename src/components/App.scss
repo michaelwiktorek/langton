@@ -16,31 +16,4 @@ html {
             background-color: darken(green, 10);
         }
     }
-
-    .line-span {
-        display: block;
-    }
-
-    .map-container {
-        .row {
-            display: block;
-        }
-        .grid-cell {
-            display: table-cell;
-            border-right: 1px solid lighten(green, 5);
-            border-bottom: 1px solid lighten(green, 5);
-
-            height: 12px;
-            width: 12px;
-            svg {
-                position: absolute;
-            }
-            &.color-0 {
-                background-color: green;
-            }
-            &.color-1 {
-                background-color: red;
-            }
-        }
-    }
 }
