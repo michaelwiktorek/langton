@@ -1,27 +1,56 @@
-import { GridSquareColor } from "./GridSquareColor";
+import { GridSquareColor, GridSquareNull } from "./GridSquareColor";
 import { Coordinate } from "./Coordinate";
 
+export interface GridSquare {
+    color: GridSquareColor;
+    rendered: boolean;
+}
+
 export interface Grid {
-    data: GridSquareColor[][];
+    data: GridSquare[][];
 }
 
-export function getSquare(grid: Grid, coord: Coordinate): GridSquareColor {
-    if (
-        coord.x >= grid.data.length ||
+function invalid(grid: Grid, coord: Coordinate): boolean {
+    return (
+        coord.x >= grid.data[0].length ||
         coord.y >= grid.data.length ||
-        grid.data[coord.x] === undefined
-    ) {
-        throw new Error(`Access outside of grid at ${coord.x}, ${coord.y}`);
-    }
-    return grid.data[coord.x][coord.y];
+        grid.data[coord.y] == null
+    );
 }
 
-export function newGrid(size: number): Grid {
-    const newGrid: GridSquareColor[][] = [];
-    for (let i = 0; i < size; i++) {
-        const row: GridSquareColor[] = [];
-        for (let j = 0; j < size; j++) {
-            row.push(0);
+function throwInvalid(coord: Coordinate) {
+    throw new Error(`Access outside of grid at ${coord.x}, ${coord.y}`);
+}
+
+function throwIfInvalid(grid: Grid, coord: Coordinate) {
+    if (invalid(grid, coord)) {
+        throwInvalid(coord);
+    }
+}
+
+export function mutate_setSquare(
+    grid: Grid,
+    coord: Coordinate,
+    data: GridSquare
+) {
+    throwIfInvalid(grid, coord);
+    grid.data[coord.y][coord.x] = data;
+}
+
+export function getSquare(grid: Grid, coord: Coordinate): GridSquare {
+    throwIfInvalid(grid, coord);
+    return grid.data[coord.y][coord.x];
+}
+
+export function newGrid(height: number, width: number): Grid {
+    const newGrid: GridSquare[][] = [];
+    for (let i = 0; i < height; i++) {
+        const row: GridSquare[] = [];
+        for (let j = 0; j < width; j++) {
+            row.push({
+                color: GridSquareNull,
+                rendered: false
+            });
         }
         newGrid.push(row);
     }

@@ -1,118 +1,156 @@
 import * as React from "react";
 import { Bug, copyBug } from "../../models/Bug";
+import { Coordinate } from "../../models/Coordinate";
 import { Game } from "../../models/Game";
 import { GameState } from "../../models/GameState";
-import { newGrid, getSquare } from "../../models/Grid";
+import {
+    getSquare,
+    Grid,
+    GridSquare,
+    mutate_setSquare,
+    newGrid
+} from "../../models/Grid";
 import { turnSequenceToRuleSet } from "../../models/RuleSet";
 import { numberToColor } from "../../utils/ColorNames";
 import "./CanvasRenderer.scss";
 
 export interface CanvasRendererProps {
-    canvasMultiplier: number;
-    gridSize: number;
+    squareSize: number;
+    gridHeight: number;
+    gridWidth: number;
     rules: string;
     initialBug: Bug;
     bufferLength: number;
+    canvasBackground: string;
+    canvasLines: string;
+    drawWithLines: boolean;
 }
 
 export class CanvasRenderer extends React.Component<CanvasRendererProps> {
     private gameState: GameState;
     private game: Game;
-    private timerId: number;
-    private bufferedTimerId: number;
+    private timerId: number | null;
+    private bufferedTimerId: number | null;
+    private canvas: HTMLCanvasElement;
 
     constructor(props: CanvasRendererProps) {
         super(props);
         this.gameState = {
-            grid: newGrid(props.gridSize),
+            grid: newGrid(props.gridHeight, props.gridWidth),
             bug: copyBug(props.initialBug)
         };
         this.game = new Game(turnSequenceToRuleSet(props.rules));
-        this.timerId = 0;
-        this.bufferedTimerId = 0;
     }
 
     componentDidMount() {
         this.initializeCanvas();
     }
 
-    private getCanvas = (): CanvasRenderingContext2D => {
-        return (this.refs.canvas as HTMLCanvasElement).getContext("2d")!;
+    private getCtx = (): CanvasRenderingContext2D => {
+        return this.canvas.getContext("2d")!;
     };
 
     private renderGridLines = () => {
-        const ctx = this.getCanvas();
-        ctx.strokeStyle = "black";
-        // ctx.lineWidth = 1;
-        for (let i = 0; i < this.props.gridSize + 1; i++) {
-            ctx.moveTo(i * this.props.canvasMultiplier + 0.5, 0);
+        const ctx = this.getCtx();
+        ctx.strokeStyle = this.props.canvasLines;
+        for (let i = 0; i < this.props.gridWidth + 1; i++) {
+            ctx.moveTo(i * this.props.squareSize + 0.5, 0);
             ctx.lineTo(
-                i * this.props.canvasMultiplier + 0.5,
-                this.props.gridSize * this.props.canvasMultiplier + 1
+                i * this.props.squareSize + 0.5,
+                this.props.gridWidth * this.props.squareSize + 1
             );
         }
-        for (let i = 0; i < this.props.gridSize + 1; i++) {
-            ctx.moveTo(0, i * this.props.canvasMultiplier + 0.5);
+        for (let i = 0; i < this.props.gridHeight + 1; i++) {
+            ctx.moveTo(0, i * this.props.squareSize + 0.5);
             ctx.lineTo(
-                this.props.gridSize * this.props.canvasMultiplier,
-                i * this.props.canvasMultiplier + 0.5
+                this.props.gridHeight * this.props.squareSize,
+                i * this.props.squareSize + 0.5
             );
         }
         ctx.stroke();
     };
 
     private initializeCanvas = () => {
-        const size = this.props.gridSize;
-        const ctx = this.getCanvas();
-        ctx.fillStyle = "white";
+        const height = this.props.gridHeight;
+        const width = this.props.gridWidth;
+        const ctx = this.getCtx();
+        ctx.fillStyle = this.props.canvasBackground;
         ctx.fillRect(
             0,
             0,
-            size * this.props.canvasMultiplier,
-            size * this.props.canvasMultiplier
+            width * this.props.squareSize,
+            height * this.props.squareSize
         );
         this.renderGridLines();
     };
 
     private updateCanvas() {
-        const ctx = this.getCanvas();
-        const drawingDatum = this.game.mutableTick(this.gameState);
-        ctx.fillStyle = numberToColor(drawingDatum.color);
-        ctx.fillRect(
-            drawingDatum.position.x * this.props.canvasMultiplier + 1,
-            this.props.gridSize * this.props.canvasMultiplier -
-                drawingDatum.position.y * this.props.canvasMultiplier +
-                1,
-            this.props.canvasMultiplier - 1,
-            this.props.canvasMultiplier - 1
-        );
+        const ctx = this.getCtx();
+        try {
+            const square = this.game.mutableTick(this.gameState);
+            this.renderSquare(
+                ctx,
+                square.position,
+                square.square,
+                this.gameState.grid
+            );
+        } catch (e) {
+            console.error(e);
+            this.handleStop();
+        }
+    }
+
+    private renderSquare(
+        ctx: CanvasRenderingContext2D,
+        pos: Coordinate,
+        square: GridSquare,
+        grid: Grid
+    ) {
+        // only render unrendered squares
+        if (square.rendered) {
+            return;
+        }
+        const line = this.props.drawWithLines ? 1 : 0;
+        const squareSize = this.props.squareSize;
+        const gridHeight = this.props.gridHeight;
+        ctx.fillStyle = numberToColor(square.color);
+        const x = pos.x * squareSize + line;
+        const y = squareSize * gridHeight - pos.y * squareSize + line;
+        const width = squareSize - line;
+        const height = squareSize - line;
+        ctx.fillRect(x, y, width, height);
+        mutate_setSquare(grid, pos, { color: square.color, rendered: true });
     }
 
     private bufferCanvasUpdates(ticks: number) {
         if (ticks === 0) {
             return;
         }
-        for (let i = 0; i < ticks; i++) {
-            this.game.mutableTick(this.gameState);
+        try {
+            for (let i = 0; i < ticks; i++) {
+                this.game.mutableTick(this.gameState);
+            }
+            this.renderEntireGrid(this.gameState);
+        } catch (e) {
+            console.error(e);
+            this.handleStop();
         }
-        this.renderEntireGrid(this.gameState);
     }
 
     private renderEntireGrid = (state: GameState) => {
-        const ctx = this.getCanvas();
-        const size = this.props.gridSize;
-        for (let i = 0; i < size; i++) {
-            for (let j = 0; j < size; j++) {
-                ctx.fillStyle = numberToColor(
-                    getSquare(state.grid, { x: j, y: i })
-                );
-                ctx.fillRect(
-                    j * this.props.canvasMultiplier,
-                    size * this.props.canvasMultiplier -
-                        i * this.props.canvasMultiplier,
-                    this.props.canvasMultiplier,
-                    this.props.canvasMultiplier
-                );
+        const ctx = this.getCtx();
+        const height = this.props.gridHeight;
+        const width = this.props.gridWidth;
+
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                try {
+                    const square = getSquare(state.grid, { x, y });
+                    this.renderSquare(ctx, { x, y }, square, state.grid);
+                } catch (e) {
+                    console.error(e);
+                    this.handleStop();
+                }
             }
         }
     };
@@ -121,7 +159,7 @@ export class CanvasRenderer extends React.Component<CanvasRendererProps> {
         this.updateCanvas();
     };
     private handlePlay = () => {
-        if (this.timerId === 0) {
+        if (this.timerId == null && this.bufferedTimerId == null) {
             this.timerId = window.setInterval(this.handleTick, 50);
         }
     };
@@ -129,13 +167,19 @@ export class CanvasRenderer extends React.Component<CanvasRendererProps> {
         this.bufferCanvasUpdates(this.props.bufferLength);
     };
     private handlePlayBuffer = () => {
-        if (this.bufferedTimerId === 0) {
+        if (this.timerId == null && this.bufferedTimerId == null) {
             this.bufferedTimerId = window.setInterval(this.handleBuffer, 50);
         }
     };
     private handleStop = () => {
-        clearInterval(this.bufferedTimerId);
-        clearInterval(this.timerId);
+        if (this.bufferedTimerId != null) {
+            clearInterval(this.bufferedTimerId);
+            this.bufferedTimerId = null;
+        }
+        if (this.timerId != null) {
+            clearInterval(this.timerId);
+            this.timerId = null;
+        }
     };
 
     render() {
@@ -159,13 +203,9 @@ export class CanvasRenderer extends React.Component<CanvasRendererProps> {
                     </div>
                 </div>
                 <canvas
-                    ref="canvas"
-                    width={
-                        this.props.gridSize * this.props.canvasMultiplier + 1
-                    }
-                    height={
-                        this.props.gridSize * this.props.canvasMultiplier + 1
-                    }
+                    ref={el => (this.canvas = el!)}
+                    width={this.props.gridWidth * this.props.squareSize + 1}
+                    height={this.props.gridHeight * this.props.squareSize + 1}
                 />
             </div>
         );

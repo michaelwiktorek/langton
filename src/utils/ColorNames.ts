@@ -1,5 +1,5 @@
 export function numberToColor(num: number) {
-    return num === 0 || num === 2 ? "black" : CSS_COLOR_NAMES[num + 20];
+    return num === 0 ? "black" : CSS_COLOR_NAMES[num + 28];
 }
 
 export const CSS_COLOR_NAMES = [
