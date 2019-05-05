@@ -25,9 +25,9 @@ export class App extends React.Component<{}, AppState> {
     constructor(props: React.Props<{}>) {
         super(props);
         this.state = {
-            canvasMultiplier: 10,
+            canvasMultiplier: 5,
             gridSize: 128,
-            rules: COOL_RULES["square"],
+            rules: COOL_RULES["symmetry"],
             initialBug: {
                 position: { x: 64, y: 64 },
                 direction: Direction.NORTH

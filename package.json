@@ -1,5 +1,5 @@
 {
-    "name": "Langton",
+    "name": "langton",
     "version": "1.0.0",
     "description": "Langton's Ant Implementation",
     "main": "index.js",
@@ -8,23 +8,23 @@
     "dependencies": {
         "@types/classnames": "^2.2.3",
         "@types/lodash": "^4.14.93",
-        "@types/react": "^16.0.34",
-        "@types/react-dom": "^16.0.3",
+        "@types/react": "^16.8.6",
+        "@types/react-dom": "^16.8.4",
         "classnames": "^2.2.5",
         "css-loader": "^0.28.9",
         "lodash": "^4.17.4",
         "node-sass": "^4.7.2",
         "path": "^0.12.7",
-        "react": "^16.2.0",
-        "react-dom": "^16.2.0",
-        "react-feather": "^1.0.8",
+        "react": "^16.8.6",
+        "react-dom": "^16.8.6",
         "sass-loader": "^6.0.6",
         "source-map-loader": "^0.2.3",
         "style-loader": "^0.19.1",
-        "ts-loader": "^3.3.0",
-        "typescript": "^2.6.2",
-        "webpack": "^3.10.0",
-        "webpack-dev-server": "^2.11.1"
+        "ts-loader": "^5.4.5",
+        "typescript": "^3.4.3",
+        "webpack": "^4.30.0",
+        "webpack-cli": "^3.2.2",
+        "webpack-dev-server": "^3.3.1"
     },
     "scripts": {
         "dev": "webpack-dev-server --hot --port 8080"
